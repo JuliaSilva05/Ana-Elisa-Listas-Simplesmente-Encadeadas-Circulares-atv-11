@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node{
+  int info;
+  struct node* prox;
+} Node;
+
+typedef struct lseCircular{
+  Node* inicio;
+  Node* fim;
+  int qtd;
+}LSECircular;
+
+void exibirOpcoes() {
+  printf("\nOpções: \n");
+  printf("1 –Inserir valor no início da lista \n");
+  printf("2 –Inserir valor no final da lista \n");
+  printf("3 –Remover primeiro da lista \n");
+  printf("4 –Remover último da lista \n");
+  printf("5 –Exibir a lista \n");
+  printf("0 -Encerrar programa \n");
+  printf("Informe a opção desejada: ");
+}
+
+int isEmpty(LSECircular lista){
+  if(lista.qtd == 0){
+    return 1;
+  }else{
+    return 0;
+  }
+}
+
+void exibir(LSECircular lista){
+  Node *aux = lista.inicio;
+  if (isEmpty(lista)==1){
+    printf("Lista vazia!\n");
+  } else{
+    do{
+      printf("%d, ",aux->info);
+      aux = aux->prox;
+    } while (aux != lista.inicio);
+    printf("\n%d ",lista.qtd);
+    printf("\n");
+  }
+}
+
+void inicializar(LSECircular* lista){
+  lista->inicio = NULL;
+  lista->fim = NULL;
+  lista->qtd = 0;
+}
+
+void inserirInicio(LSECircular* lista, int valor){
+    Node *novo = (Node*)malloc(sizeof(Node));
+    novo->info = valor;
+    if (isEmpty(*lista)==1){ // se tiver vazio
+      lista->inicio = novo;
+      lista->fim = novo;
+      lista->qtd++;
+      lista->fim->prox = lista->inicio;
+    } else{
+      novo->prox = lista->inicio;
+      lista->inicio = novo;
+      lista->qtd++;
+      lista->fim->prox = lista->inicio;
+    }
+}
+
+void inserirFinal(LSECircular* lista, int valor){
+  Node *novo = (Node*)malloc(sizeof(Node));
+  novo->info = valor;
+  if (isEmpty(*lista)==1){ // se tiver vazio
+    lista->inicio = novo;
+    lista->fim = novo;
+    lista->qtd++;
+    lista->fim->prox = lista->inicio;
+  } else{
+    lista->fim->prox = novo;
+    novo->prox = lista->inicio;
+    lista->fim = novo;
+    lista->qtd++;
+    
+  }
+}
+
+void removerInicio(LSECircular* lista){
+  if (isEmpty(*lista)==1){
+    printf("Lista vazia!\n");
+  }
+  else{
+    if (lista->qtd == 1){
+      printf("Removendo %d do inicio...\n",lista->inicio->info);
+      free(lista->inicio);
+      lista->inicio = NULL;
+      lista->fim = NULL;
+      lista->qtd = 0;
+    } else{
+      printf("Removendo %d do inicio...\n",lista->inicio->info);
+      Node *aux = lista->inicio;
+      lista->inicio = lista->inicio->prox;
+      lista->fim->prox = lista->inicio;
+      aux->prox = NULL;
+      lista->qtd--;
+      
+    }
+  }
+}
+    
+
+void removerFinal(LSECircular* lista){
+  if (isEmpty(*lista)==1){
+    printf("Lista vazia!\n");
+  }
+  else{
+    if (lista->qtd == 1){
+      printf("Removendo %d do fim...\n",lista->fim->info);
+      free(lista->inicio);
+      lista->inicio = NULL;
+      lista->inicio = NULL;
+      lista->qtd = 0;
+    } else{
+      printf("Removendo %d do fim...\n",lista->fim->info);
+      Node *aux = lista->inicio;
+      while (aux->prox != lista->fim){
+        aux = aux->prox;
+      }
+      free(lista->fim);
+      lista->fim = aux;
+      lista->fim->prox = lista->inicio;
+      lista->qtd--;
+    }
+
+  }
+}
+
+int main() {
+  LSECircular listaInteiros;
+  inicializar(&listaInteiros);
+  int op, num;
+  do{
+    exibirOpcoes();
+    scanf("%d", &op);
+    switch(op) {
+      case 1: 
+        printf("Informe o valor a ser inserido no início: ");  
+        scanf("%d", &num);
+        inserirInicio(&listaInteiros, num);
+        break;  
+      case 2: 
+        printf("Informe o valor a ser inserido no final: ");  
+        scanf("%d", &num);
+        inserirFinal(&listaInteiros, num);
+        break;
+      case 3:         
+        removerInicio(&listaInteiros);
+        break;
+      case 4:         
+        removerFinal(&listaInteiros);
+        break;
+      case 5: 
+        exibir(listaInteiros);
+        break;
+      case 0: 
+        printf("Fim de programa! \n");
+        break;
+      default: printf("Opção inválida! \n");}
+  } while(op != 0);
+  
+  return 0;
+}
